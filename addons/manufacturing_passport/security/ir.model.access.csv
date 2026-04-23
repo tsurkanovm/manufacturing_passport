@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qc_template_inspector,mrp.qc.template inspector,model_mrp_qc_template,manufacturing_passport.group_qc_inspector,1,0,0,0
+access_qc_template_manager,mrp.qc.template manager,model_mrp_qc_template,manufacturing_passport.group_qc_manager,1,1,1,1
+access_qc_template_mrp_manager,mrp.qc.template mrp_manager,model_mrp_qc_template,mrp.group_mrp_manager,1,1,1,1
+access_qc_template_line_inspector,mrp.qc.template.line inspector,model_mrp_qc_template_line,manufacturing_passport.group_qc_inspector,1,0,0,0
+access_qc_template_line_manager,mrp.qc.template.line manager,model_mrp_qc_template_line,manufacturing_passport.group_qc_manager,1,1,1,1
+access_qc_template_line_mrp_manager,mrp.qc.template.line mrp_manager,model_mrp_qc_template_line,mrp.group_mrp_manager,1,1,1,1

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="manufacturing_passport_menu_qc"
+        name="Контроль якості"
+        parent="mrp.menu_mrp_root"
+        sequence="20"
+    />
+
+    <menuitem
+        id="manufacturing_passport_menu_settings"
+        name="Налаштування"
+        parent="manufacturing_passport_menu_qc"
+        sequence="90"
+    />
+
+    <menuitem
+        id="manufacturing_passport_menu_qc_template"
+        name="Шаблони перевірки"
+        parent="manufacturing_passport_menu_settings"
+        action="manufacturing_passport_qc_template_action"
+        sequence="10"
+        groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"
+    />
+</odoo>

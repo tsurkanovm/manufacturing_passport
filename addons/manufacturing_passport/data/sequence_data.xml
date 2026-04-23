@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_qc_inspection" model="ir.sequence">
+        <field name="name">QC Inspection Sequence</field>
+        <field name="code">mrp.qc.inspection</field>
+        <field name="prefix">QCI/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_product_passport" model="ir.sequence">
+        <field name="name">Product Passport Sequence</field>
+        <field name="code">mrp.product.passport</field>
+        <field name="prefix">PASSPORT/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

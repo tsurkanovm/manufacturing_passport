@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_qc" model="ir.module.category">
+        <field name="name">Контроль якості</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_qc_inspector" model="res.groups">
+        <field name="name">Інспектор ОТК</field>
+        <field name="category_id" ref="module_category_qc"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="group_qc_manager" model="res.groups">
+        <field name="name">Керівник ОТК</field>
+        <field name="category_id" ref="module_category_qc"/>
+        <field name="implied_ids" eval="[(4, ref('group_qc_inspector'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>
