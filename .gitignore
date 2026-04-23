@@ -1,0 +1,23 @@
+# Ignore everything at root level
+*
+
+# Ignore specific subdirectories
+src/**
+.idea/**
+.venv/**
+.ai/**
+
+# Whitelist specific items
+!addons/
+!addons/**
+!commands
+!readme.md
+!docker-compose.yaml
+!Dockerfile
+!docker_scripts/**
+!.gitignore
+!requirements.txt
+
+
+
+
