@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="manufacturing_passport_mrp_production_view_form_inherit" model="ir.ui.view">
+        <field name="name">manufacturing_passport.mrp.production.view.form.inherit</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart buttons for QC inspections and passports -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_inspections" type="object"
+                        class="oe_stat_button" icon="fa-check-circle"
+                        invisible="inspection_count == 0">
+                    <field name="inspection_count" widget="statinfo"
+                           string="Акти перевірки"/>
+                </button>
+                <button name="action_view_passports" type="object"
+                        class="oe_stat_button" icon="fa-id-card"
+                        invisible="passport_count == 0">
+                    <field name="passport_count" widget="statinfo"
+                           string="Паспорти"/>
+                </button>
+            </xpath>
+
+            <!-- Action buttons in header -->
+            <xpath expr="//field[@name='state'][@widget='statusbar']" position="before">
+                <button name="action_create_inspection" type="object"
+                        string="Створити акт перевірки"
+                        class="btn-primary"
+                        invisible="state not in ('done', 'to_close') or has_approved_inspection"
+                        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+                <button name="action_create_passport" type="object"
+                        string="Створити паспорт"
+                        class="btn-secondary"
+                        invisible="not has_approved_inspection or has_issued_passport"
+                        groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

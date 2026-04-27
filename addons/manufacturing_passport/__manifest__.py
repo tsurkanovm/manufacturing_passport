@@ -10,12 +10,17 @@
     "author": "Your Name",
     "website": "",
     "license": "LGPL-3",
-    "depends": ["mrp", "stock"],
+    "depends": ["mrp", "stock", "mail"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/sequence_data.xml",
         "views/qc_template_views.xml",
+        "views/qc_inspection_views.xml",
+        "views/product_passport_views.xml",
+        "views/mrp_production_views.xml",
+        "reports/inspection_report.xml",
+        "reports/passport_report.xml",
         "views/menu.xml",
     ],
     "demo": [

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="manufacturing_passport_product_passport_view_form" model="ir.ui.view">
+        <field name="name">manufacturing_passport.mrp.product.passport.view.form</field>
+        <field name="model">mrp.product.passport</field>
+        <field name="arch" type="xml">
+            <form string="Паспорт виробу">
+                <header>
+                    <button name="action_issue" type="object"
+                            string="Видати паспорт"
+                            class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+                    <button name="action_cancel" type="object"
+                            string="Анулювати"
+                            class="btn-danger"
+                            invisible="state != 'issued'"
+                            groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+                    <button name="action_print_passport" type="object"
+                            string="Друк паспорта"
+                            invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,issued"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Виріб">
+                            <field name="product_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="lot_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="production_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="inspection_id"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Дати та гарантія">
+                            <field name="date_manufactured"
+                                   readonly="state != 'draft'"/>
+                            <field name="date_issued"
+                                   readonly="state != 'draft'"/>
+                            <field name="warranty_months"
+                                   readonly="state != 'draft'"/>
+                            <field name="warranty_end" readonly="1"/>
+                            <field name="issued_by"
+                                   readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Комплектуючі" name="components">
+                            <field name="component_line_ids"
+                                   readonly="state != 'draft'">
+                                <list string="Комплектуючі"
+                                      editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="lot_id"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Примітки" name="notes">
+                            <field name="note"
+                                   placeholder="Додаткові примітки..."
+                                   readonly="state != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="manufacturing_passport_product_passport_view_list" model="ir.ui.view">
+        <field name="name">manufacturing_passport.mrp.product.passport.view.list</field>
+        <field name="model">mrp.product.passport</field>
+        <field name="arch" type="xml">
+            <list string="Паспорти виробів"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'issued'">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <field name="production_id"/>
+                <field name="date_manufactured" optional="show"/>
+                <field name="date_issued"/>
+                <field name="warranty_end" optional="show"/>
+                <field name="issued_by" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'issued'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="manufacturing_passport_product_passport_view_search" model="ir.ui.view">
+        <field name="name">manufacturing_passport.mrp.product.passport.view.search</field>
+        <field name="model">mrp.product.passport</field>
+        <field name="arch" type="xml">
+            <search string="Пошук паспортів">
+                <field name="name" string="Номер"/>
+                <field name="product_id" string="Продукт"/>
+                <field name="lot_id" string="Серійний номер"/>
+                <field name="production_id" string="Виробниче замовлення"/>
+                <separator/>
+                <filter string="Чернетки" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Видані" name="issued" domain="[('state', '=', 'issued')]"/>
+                <filter string="Анульовані" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group expand="0" string="Групувати за">
+                    <filter name="group_product" string="Продуктом"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_production" string="Виробничим замовленням"
+                            context="{'group_by': 'production_id'}"/>
+                    <filter name="group_state" string="Статусом"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Датою видачі"
+                            context="{'group_by': 'date_issued:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="manufacturing_passport_product_passport_action" model="ir.actions.act_window">
+        <field name="name">Паспорти виробів</field>
+        <field name="res_model">mrp.product.passport</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Створіть перший паспорт виробу
+            </p>
+            <p>
+                Паспорти виробів формуються після затвердження акту перевірки.
+                Їх можна створити безпосередньо з виробничого замовлення.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -8,6 +8,24 @@
     />
 
     <menuitem
+        id="manufacturing_passport_menu_qc_inspection"
+        name="Акти перевірки"
+        parent="manufacturing_passport_menu_qc"
+        action="manufacturing_passport_qc_inspection_action"
+        sequence="10"
+        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"
+    />
+
+    <menuitem
+        id="manufacturing_passport_menu_product_passport"
+        name="Паспорти виробів"
+        parent="manufacturing_passport_menu_qc"
+        action="manufacturing_passport_product_passport_action"
+        sequence="20"
+        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"
+    />
+
+    <menuitem
         id="manufacturing_passport_menu_settings"
         name="Налаштування"
         parent="manufacturing_passport_menu_qc"
