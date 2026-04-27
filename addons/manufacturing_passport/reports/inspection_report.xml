@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_qc_inspection" model="ir.actions.report">
+        <field name="name">Акт випробувань</field>
+        <field name="model">mrp.qc.inspection</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">manufacturing_passport.report_qc_inspection</field>
+        <field name="report_file">manufacturing_passport.report_qc_inspection</field>
+        <field name="binding_model_id" ref="model_mrp_qc_inspection"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_qc_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center mb-4">
+                            <h2>АКТ ВИПРОБУВАНЬ</h2>
+                            <h3>№ <t t-esc="doc.name"/></h3>
+                            <p>від
+                                <t t-esc="doc.inspection_date.strftime('%d.%m.%Y') if doc.inspection_date else ''"/>
+                            </p>
+                        </div>
+
+                        <!-- General information -->
+                        <table class="table table-sm table-bordered mb-4" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <th style="width:35%">Виріб</th>
+                                    <td><t t-esc="doc.product_id.display_name"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Серійний номер / партія</th>
+                                    <td><t t-esc="doc.lot_id.name or '—'"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Виробниче замовлення</th>
+                                    <td><t t-esc="doc.production_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Інспектор</th>
+                                    <td><t t-esc="doc.inspector_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Дата перевірки</th>
+                                    <td><t t-esc="doc.inspection_date.strftime('%d.%m.%Y') if doc.inspection_date else '—'"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Results table -->
+                        <h4>Результати випробувань</h4>
+                        <table class="table table-sm table-bordered mb-4" style="width:100%">
+                            <thead>
+                                <tr style="background-color:#f5f5f5">
+                                    <th style="width:4%">№</th>
+                                    <th style="width:22%">Параметр</th>
+                                    <th style="width:18%">Метод вимірювання</th>
+                                    <th style="width:8%">Одиниця</th>
+                                    <th style="width:14%">Норма</th>
+                                    <th style="width:16%">Фактичне значення</th>
+                                    <th style="width:18%">Висновок</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td class="text-center">
+                                            <t t-esc="line_index + 1"/>
+                                        </td>
+                                        <td><t t-esc="line.name"/></td>
+                                        <td><t t-esc="line.method or '—'"/></td>
+                                        <td class="text-center"><t t-esc="line.uom or '—'"/></td>
+                                        <td class="text-center">
+                                            <t t-if="line.check_type == 'quantitative' and (line.min_value or line.max_value)">
+                                                <t t-esc="line.min_value"/>&#8202;–&#8202;<t t-esc="line.max_value"/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-if="line.check_type == 'quantitative'">
+                                                <t t-esc="line.actual_value"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="line.qualitative_result or '—'"/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-if="line.line_result == 'pass'">
+                                                <strong style="color:#28a745">ПРИДАТНИЙ</strong>
+                                            </t>
+                                            <t t-elif="line.line_result == 'fail'">
+                                                <strong style="color:#dc3545">НЕПРИДАТНИЙ</strong>
+                                            </t>
+                                            <t t-else="">НЕ ПЕРЕВІРЕНО</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Overall result -->
+                        <div class="mb-4 p-3" style="border: 2px solid #333; display:inline-block; min-width:300px">
+                            <strong>ЗАГАЛЬНИЙ ВИСНОВОК:&#160;</strong>
+                            <t t-if="doc.result == 'pass'">
+                                <strong style="font-size:1.1em; color:#28a745">ПРИДАТНИЙ</strong>
+                            </t>
+                            <t t-elif="doc.result == 'fail'">
+                                <strong style="font-size:1.1em; color:#dc3545">НЕПРИДАТНИЙ</strong>
+                            </t>
+                            <t t-elif="doc.result == 'conditional'">
+                                <strong style="font-size:1.1em; color:#fd7e14">УМОВНО ПРИДАТНИЙ</strong>
+                            </t>
+                            <t t-else="">
+                                <span>—</span>
+                            </t>
+                        </div>
+
+                        <!-- Notes -->
+                        <t t-if="doc.note">
+                            <div class="mb-4">
+                                <strong>Примітки:</strong>
+                                <p><t t-esc="doc.note"/></p>
+                            </div>
+                        </t>
+
+                        <!-- Signatures -->
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <p>
+                                    Перевірив: ________________________
+                                    <br/>
+                                    <small>(<t t-esc="doc.inspector_id.name"/>)</small>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p>
+                                    Затвердив: ________________________
+                                    <br/>
+                                    <small>(<t t-if="doc.approved_by"><t t-esc="doc.approved_by.name"/></t><t t-else="">посада, підпис</t>)</small>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <small>Штамп ОТК: _____________________</small>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
