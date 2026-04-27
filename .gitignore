@@ -17,6 +17,7 @@ src/**
 !docker_scripts/**
 !.gitignore
 !requirements.txt
+!README.md
 
 
 
