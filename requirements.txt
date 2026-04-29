@@ -1,7 +1,0 @@
-pandas
-openpyxl>=3.1.5
-xlrd
-pydevd-pycharm~=253.0
-requests
-pylint-odoo
-black

@@ -1,63 +1,57 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-
+    image: ${ODOO_IMAGE}
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
-
-    ports:
-      - "${WEB_PORT}:8069"
-      - "${LONGPOLLING_PORT}:8072"
-
+    environment:
+      PASSWORD_FILE: /run/secrets/postgresql_password
+      HOST: ${DB_HOST}
+      PORT: ${DB_PORT}
+      USER: ${DB_USER}
+      DATABASE: ${DB_NAME}
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./config:/etc/odoo
       - ./addons:/mnt/extra-addons
-      - ./docker_scripts:/opt/odoo-dev-scripts:ro
-
-    env_file:
-      - env.local
-
-    environment:
-      PYCHARM_DEBUG: ${PYCHARM_DEBUG}
-      PYCHARM_DEBUG_WAIT: ${PYCHARM_DEBUG_WAIT}
-      PYCHARM_DEBUG_HOST: ${PYCHARM_DEBUG_HOST}
-      PYCHARM_DEBUG_PORT: ${PYCHARM_DEBUG_PORT}
-      ODOO_DEV_MODE: ${ODOO_DEV_MODE}
-
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-    entrypoint: ["/opt/odoo-dev-scripts/start-odoo.sh"]
+    secrets:
+      - postgresql_password
+    ports:
+      - "127.0.0.1:18269:8269"
+    networks:
+      - internal
+      - proxy
 
   db:
-    image: postgres:18
+    image: ${DB_IMAGE}
     restart: unless-stopped
-
-    ports:
-      - "${DB_PORT}:5432"
-
-    env_file:
-      - env.local
-
     environment:
-      POSTGRES_DB: ${ODOO_DB_NAME}
-      POSTGRES_USER: ${ODOO_DB_USER}
-      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgresql_password
       PGDATA: /var/lib/postgresql/data/pgdata
-
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data
-
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    secrets:
+      - postgresql_password
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${ODOO_DB_USER} -d ${ODOO_DB_NAME}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 20
+    networks:
+      - internal
 
 volumes:
   odoo-web-data:
   odoo-db-data:
+
+secrets:
+  postgresql_password:
+    file: ./secrets/db_password
+
+networks:
+  internal:
+  proxy:
+    external: true
