@@ -8,6 +8,15 @@
     />
 
     <menuitem
+        id="manufacturing_passport_menu_production_done"
+        name="Виробничі замовлення (готові)"
+        parent="manufacturing_passport_menu_qc"
+        action="manufacturing_passport_mrp_production_done_action"
+        sequence="5"
+        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"
+    />
+
+    <menuitem
         id="manufacturing_passport_menu_qc_inspection"
         name="Акти перевірки"
         parent="manufacturing_passport_menu_qc"

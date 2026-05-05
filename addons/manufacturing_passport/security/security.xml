@@ -17,4 +17,38 @@
         <field name="implied_ids" eval="[(4, ref('group_qc_inspector'))]"/>
         <field name="users" eval="[(4, ref('base.user_admin'))]"/>
     </record>
+
+    <!-- Grant QC groups access to the Manufacturing app root menu -->
+    <record id="mrp.menu_mrp_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[
+            (4, ref('manufacturing_passport.group_qc_inspector')),
+            (4, ref('manufacturing_passport.group_qc_manager')),
+        ]"/>
+    </record>
+
+    <!-- Restrict MRP sub-menus to MRP groups so QC users only see the QC section -->
+    <record id="mrp.menu_mrp_manufacturing" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+    </record>
+    <record id="mrp.mrp_planning_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+    </record>
+    <record id="mrp.menu_mrp_bom" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+    </record>
+    <record id="mrp.menu_mrp_reporting" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+    </record>
+
+    <!-- ir.rule: QC groups can only read done manufacturing orders -->
+    <record model="ir.rule" id="mrp_production_qc_done_only_rule">
+        <field name="name">QC: only done manufacturing orders</field>
+        <field name="model_id" search="[('model','=','mrp.production')]" model="ir.model"/>
+        <field name="domain_force">[('state', '=', 'done')]</field>
+        <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_inspector'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 </odoo>

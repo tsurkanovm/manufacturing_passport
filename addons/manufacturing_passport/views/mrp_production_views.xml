@@ -36,6 +36,66 @@
                         groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
             </xpath>
 
+            <!-- Restrict Components and Miscellaneous tabs to mrp_user: QC users lack
+                 stock.move / stock.picking.type access and would get AccessErrors otherwise -->
+            <xpath expr="//page[@name='components']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+            <xpath expr="//page[@name='miscellaneous']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+
+            <!-- Gate invisible fields that cascade reads into inaccessible models for QC users:
+                 workorder_ids -> mrp.workcenter.productivity (via _compute_duration chain)
+                 move_finished_ids -> stock.location, procurement.group (via sub-field reads)
+                 production_location_id -> stock.location -->
+            <xpath expr="//field[@name='workorder_ids'][@invisible='1']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+            <xpath expr="//field[@name='move_finished_ids'][@invisible='1']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+            <xpath expr="//field[@name='production_location_id'][@invisible='1']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+            <!-- Gate button_plan which references workorder_ids in its invisible condition -->
+            <xpath expr="//button[@name='button_plan']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user</attribute>
+            </xpath>
+
+            <!-- Hide Unbuild action button and stat button from QC groups -->
+            <xpath expr="//button[@name='button_unbuild']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_view_mrp_production_unbuilds']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+
         </field>
+    </record>
+
+    <!-- Minimal list view for Done MOs used by QC groups (avoids columns referencing inaccessible models) -->
+    <record id="manufacturing_passport_mrp_production_done_view_list" model="ir.ui.view">
+        <field name="name">manufacturing_passport.mrp.production.view.list.done</field>
+        <field name="model">mrp.production</field>
+        <field name="arch" type="xml">
+            <list string="Done Manufacturing Orders" create="False" delete="False">
+                <field name="name" decoration-bf="1"/>
+                <field name="product_id"/>
+                <field name="product_qty" string="Quantity"/>
+                <field name="lot_producing_id"/>
+                <field name="date_finished"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Window action showing only done MOs — for use by QC groups -->
+    <record id="manufacturing_passport_mrp_production_done_action" model="ir.actions.act_window">
+        <field name="name">Виробничі замовлення (готові)</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'done')]</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('manufacturing_passport_mrp_production_done_view_list')})]"/>
     </record>
 </odoo>
