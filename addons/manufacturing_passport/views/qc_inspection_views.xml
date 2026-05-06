@@ -71,19 +71,19 @@
                                       decoration-muted="line_result == 'not_checked'">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
-                                    <field name="check_type"/>
+                                    <field name="parameter_type"/>
                                     <field name="method" optional="show"/>
                                     <field name="uom" optional="show"/>
                                     <field name="min_value"
-                                           invisible="check_type == 'qualitative'"
+                                           invisible="parameter_type == 'qualitative'"
                                            optional="show"/>
                                     <field name="max_value"
-                                           invisible="check_type == 'qualitative'"
+                                           invisible="parameter_type == 'qualitative'"
                                            optional="show"/>
                                     <field name="actual_value"
-                                           invisible="check_type == 'qualitative'"/>
+                                           invisible="parameter_type == 'qualitative'"/>
                                     <field name="qualitative_result"
-                                           invisible="check_type == 'quantitative'"/>
+                                           invisible="parameter_type == 'quantitative'"/>
                                     <field name="line_result"/>
                                     <field name="note" optional="hide"/>
                                 </list>

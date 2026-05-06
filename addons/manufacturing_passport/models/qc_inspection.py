@@ -134,7 +134,7 @@ class MrpQcInspection(models.Model):
                 'uom': tmpl_line.uom,
                 'min_value': tmpl_line.min_value,
                 'max_value': tmpl_line.max_value,
-                'check_type': tmpl_line.check_type,
+                'parameter_type': tmpl_line.parameter_type,
                 'note': tmpl_line.note,
             })
             for tmpl_line in self.template_id.line_ids
@@ -168,7 +168,7 @@ class MrpQcInspectionLine(models.Model):
     )
     sequence = fields.Integer(string='Порядок', default=10)
     name = fields.Char(string='Параметр', required=True)
-    check_type = fields.Selection(
+    parameter_type = fields.Selection(
         selection=[('quantitative', 'Кількісний'), ('qualitative', 'Якісний')],
         string='Тип перевірки',
         default='quantitative',
@@ -193,7 +193,7 @@ class MrpQcInspectionLine(models.Model):
 
     @api.onchange('actual_value', 'min_value', 'max_value')
     def _onchange_actual_value(self):
-        if self.check_type != 'quantitative':
+        if self.parameter_type != 'quantitative':
             return
         # Skip auto-determination when range is unconfigured (both defaults at 0)
         if self.min_value == 0.0 and self.max_value == 0.0:
