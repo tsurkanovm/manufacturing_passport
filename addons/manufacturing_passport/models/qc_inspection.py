@@ -14,7 +14,7 @@ class MrpQcInspection(models.Model):
     state = fields.Selection(
         selection=[
             ('draft', 'Чернетка'),
-            ('in_progress', 'В процесі'),
+            ('in_review', 'В процесі'),
             ('done', 'Завершено'),
             ('approved', 'Затверджено'),
             ('rejected', 'Відхилено'),

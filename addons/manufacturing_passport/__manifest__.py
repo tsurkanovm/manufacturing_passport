@@ -1,6 +1,6 @@
 {
     "name": "Manufacturing Passport & QC Inspection",
-    "version": "18.0.2.0.0",
+    "version": "18.0.3.0.0",
     "category": "Manufacturing",
     "summary": "Product passport and quality control inspection for manufacturing orders",
     "description": """
