@@ -24,7 +24,7 @@ class MrpQcTemplateLine(models.Model):
     )
     sequence = fields.Integer(string='Порядок', default=10)
     name = fields.Char(string='Параметр', required=True)
-    check_type = fields.Selection(
+    parameter_type = fields.Selection(
         selection=[('quantitative', 'Кількісний'), ('qualitative', 'Якісний')],
         string='Тип перевірки',
         default='quantitative',

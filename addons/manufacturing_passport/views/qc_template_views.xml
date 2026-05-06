@@ -36,14 +36,14 @@
                                 <list editable="bottom" string="Параметри перевірки">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
-                                    <field name="check_type"/>
+                                    <field name="parameter_type"/>
                                     <field name="method"/>
                                     <field name="uom"/>
                                     <field name="min_value"
-                                           invisible="check_type == 'qualitative'"
+                                           invisible="parameter_type == 'qualitative'"
                                            optional="show"/>
                                     <field name="max_value"
-                                           invisible="check_type == 'qualitative'"
+                                           invisible="parameter_type == 'qualitative'"
                                            optional="show"/>
                                     <field name="note" optional="hide"/>
                                 </list>

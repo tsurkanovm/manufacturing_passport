@@ -14,7 +14,7 @@ class MrpQcInspection(models.Model):
     state = fields.Selection(
         selection=[
             ('draft', 'Чернетка'),
-            ('in_progress', 'В процесі'),
+            ('in_review', 'В процесі'),
             ('done', 'Завершено'),
             ('approved', 'Затверджено'),
             ('rejected', 'Відхилено'),
@@ -79,6 +79,13 @@ class MrpQcInspection(models.Model):
         string='Вкладення',
     )
 
+    completion_rate = fields.Float(
+        string='Відсоток виконання',
+        default=0.0,
+        compute='_compute_completion_rate',
+        store=True
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -122,6 +129,17 @@ class MrpQcInspection(models.Model):
         self.ensure_one()
         return self.env.ref('manufacturing_passport.action_report_qc_inspection').report_action(self)
 
+    @api.depends('line_ids', 'line_ids.line_result')
+    def _compute_completion_rate(self):
+        for record in self:
+            total = len(record.line_ids)
+            not_checked = len(record.line_ids.filtered(
+                lambda line: line.line_result == 'not_checked')
+            )
+
+            record.completion_rate = (total - not_checked) / total if total else 0.0
+
+
     @api.onchange('template_id')
     def _onchange_template_id(self):
         if not self.template_id or self.line_ids:
@@ -134,7 +152,7 @@ class MrpQcInspection(models.Model):
                 'uom': tmpl_line.uom,
                 'min_value': tmpl_line.min_value,
                 'max_value': tmpl_line.max_value,
-                'check_type': tmpl_line.check_type,
+                'parameter_type': tmpl_line.parameter_type,
                 'note': tmpl_line.note,
             })
             for tmpl_line in self.template_id.line_ids
@@ -168,7 +186,7 @@ class MrpQcInspectionLine(models.Model):
     )
     sequence = fields.Integer(string='Порядок', default=10)
     name = fields.Char(string='Параметр', required=True)
-    check_type = fields.Selection(
+    parameter_type = fields.Selection(
         selection=[('quantitative', 'Кількісний'), ('qualitative', 'Якісний')],
         string='Тип перевірки',
         default='quantitative',
@@ -193,7 +211,7 @@ class MrpQcInspectionLine(models.Model):
 
     @api.onchange('actual_value', 'min_value', 'max_value')
     def _onchange_actual_value(self):
-        if self.check_type != 'quantitative':
+        if self.parameter_type != 'quantitative':
             return
         # Skip auto-determination when range is unconfigured (both defaults at 0)
         if self.min_value == 0.0 and self.max_value == 0.0:
