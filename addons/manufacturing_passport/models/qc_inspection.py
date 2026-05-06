@@ -79,6 +79,13 @@ class MrpQcInspection(models.Model):
         string='Вкладення',
     )
 
+    completion_rate = fields.Float(
+        string='Відсоток виконання',
+        default=0.0,
+        compute='_compute_completion_rate',
+        store=True
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -121,6 +128,17 @@ class MrpQcInspection(models.Model):
     def action_print_inspection(self):
         self.ensure_one()
         return self.env.ref('manufacturing_passport.action_report_qc_inspection').report_action(self)
+
+    @api.depends('line_ids', 'line_ids.line_result')
+    def _compute_completion_rate(self):
+        for record in self:
+            total = len(record.line_ids)
+            not_checked = len(record.line_ids.filtered(
+                lambda line: line.line_result == 'not_checked')
+            )
+
+            record.completion_rate = (total - not_checked) / total if total else 0.0
+
 
     @api.onchange('template_id')
     def _onchange_template_id(self):

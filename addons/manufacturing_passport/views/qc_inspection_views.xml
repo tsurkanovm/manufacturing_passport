@@ -56,6 +56,7 @@
                                    readonly="state not in ('draft', 'in_progress')"/>
                             <field name="result" widget="radio"
                                    readonly="state in ('approved', 'rejected')"/>
+                            <field name="completion_rate" widget="percentage"/>
                             <field name="approved_by" invisible="state not in ('approved', 'rejected')"/>
                             <field name="approved_date" invisible="state not in ('approved', 'rejected')"/>
                         </group>
