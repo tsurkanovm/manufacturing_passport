@@ -9,7 +9,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">10</field>
         <field name="name">Напруга живлення</field>
-        <field name="check_type">quantitative</field>
+        <field name="parameter_type">quantitative</field>
         <field name="method">Мультиметр, вимірювання на клемах живлення</field>
         <field name="uom">В</field>
         <field name="min_value">10.5</field>
@@ -20,7 +20,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">20</field>
         <field name="name">Струм споживання в режимі очікування</field>
-        <field name="check_type">quantitative</field>
+        <field name="parameter_type">quantitative</field>
         <field name="method">Амперметр, режим холостого ходу</field>
         <field name="uom">мА</field>
         <field name="min_value">0</field>
@@ -31,7 +31,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">30</field>
         <field name="name">Дальність зв'язку</field>
-        <field name="check_type">quantitative</field>
+        <field name="parameter_type">quantitative</field>
         <field name="method">Польові випробування з вимірювачем рівня сигналу</field>
         <field name="uom">м</field>
         <field name="min_value">800</field>
@@ -42,7 +42,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">40</field>
         <field name="name">Візуальний огляд корпусу</field>
-        <field name="check_type">qualitative</field>
+        <field name="parameter_type">qualitative</field>
         <field name="note">Перевірити відсутність тріщин, подряпин, механічних пошкоджень корпусу та рам.</field>
     </record>
 
@@ -50,7 +50,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">50</field>
         <field name="name">Перевірка роз'ємів</field>
-        <field name="check_type">qualitative</field>
+        <field name="parameter_type">qualitative</field>
         <field name="note">Перевірити надійність з'єднання всіх роз'ємів, відсутність окислення та люфту.</field>
     </record>
 
@@ -58,7 +58,7 @@
         <field name="template_id" ref="demo_qc_template_drone"/>
         <field name="sequence">60</field>
         <field name="name">Тест автоповернення</field>
-        <field name="check_type">qualitative</field>
+        <field name="parameter_type">qualitative</field>
         <field name="note">Активувати функцію Return-to-Home, переконатись що дрон повертається до точки зльоту.</field>
     </record>
 </odoo>

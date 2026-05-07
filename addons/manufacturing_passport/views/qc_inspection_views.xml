@@ -13,7 +13,7 @@
                     <button name="action_done" type="object"
                             string="Завершити перевірку"
                             class="btn-primary"
-                            invisible="state != 'in_progress'"/>
+                            invisible="state != 'in_review'"/>
                     <button name="action_approve" type="object"
                             string="Затвердити"
                             class="btn-success"
@@ -31,7 +31,7 @@
                             string="Друк акту"
                             invisible="state not in ('done', 'approved')"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,in_progress,done,approved"/>
+                           statusbar_visible="draft,in_review,done,approved"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -42,18 +42,18 @@
                     <group>
                         <group string="Основна інформація">
                             <field name="production_id"
-                                   readonly="state not in ('draft', 'in_progress')"/>
+                                   readonly="state not in ('draft', 'in_review')"/>
                             <field name="product_id" readonly="1"/>
                             <field name="lot_id"
-                                   readonly="state not in ('draft', 'in_progress')"/>
+                                   readonly="state not in ('draft', 'in_review')"/>
                             <field name="template_id"
-                                   readonly="state not in ('draft', 'in_progress')"/>
+                                   readonly="state not in ('draft', 'in_review')"/>
                         </group>
                         <group string="Деталі перевірки">
                             <field name="inspector_id"
-                                   readonly="state not in ('draft', 'in_progress')"/>
+                                   readonly="state not in ('draft', 'in_review')"/>
                             <field name="inspection_date"
-                                   readonly="state not in ('draft', 'in_progress')"/>
+                                   readonly="state not in ('draft', 'in_review')"/>
                             <field name="result" widget="radio"
                                    readonly="state in ('approved', 'rejected')"/>
                             <field name="completion_rate" widget="percentage"/>
@@ -119,7 +119,7 @@
                 <field name="inspector_id"/>
                 <field name="result"/>
                 <field name="state" widget="badge"
-                       decoration-info="state in ('draft', 'in_progress')"
+                       decoration-info="state in ('draft', 'in_review')"
                        decoration-warning="state == 'done'"
                        decoration-success="state == 'approved'"
                        decoration-danger="state == 'rejected'"/>
@@ -138,7 +138,7 @@
                 <field name="inspector_id" string="Інспектор"/>
                 <separator/>
                 <filter string="Чернетки" name="draft" domain="[('state', '=', 'draft')]"/>
-                <filter string="В процесі" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="В процесі" name="in_review" domain="[('state', '=', 'in_review')]"/>
                 <filter string="Завершені" name="done" domain="[('state', '=', 'done')]"/>
                 <filter string="Затверджені" name="approved" domain="[('state', '=', 'approved')]"/>
                 <filter string="Відхилені" name="rejected" domain="[('state', '=', 'rejected')]"/>

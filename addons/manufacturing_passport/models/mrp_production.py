@@ -95,7 +95,7 @@ class MrpProduction(models.Model):
                     'uom': tmpl_line.uom,
                     'min_value': tmpl_line.min_value,
                     'max_value': tmpl_line.max_value,
-                    'check_type': tmpl_line.check_type,
+                    'parameter_type': tmpl_line.parameter_type,
                     'note': tmpl_line.note,
                 })
                 for tmpl_line in template.line_ids

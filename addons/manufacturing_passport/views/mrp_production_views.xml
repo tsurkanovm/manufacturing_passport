@@ -6,17 +6,19 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
 
-            <!-- Smart buttons for QC inspections and passports -->
+            <!-- Smart buttons for QC inspections and passports — visible to QC roles and MRP managers only -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_view_inspections" type="object"
                         class="oe_stat_button" icon="fa-check-circle"
-                        invisible="inspection_count == 0">
+                        invisible="inspection_count == 0"
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager">
                     <field name="inspection_count" widget="statinfo"
                            string="Акти перевірки"/>
                 </button>
                 <button name="action_view_passports" type="object"
                         class="oe_stat_button" icon="fa-id-card"
-                        invisible="passport_count == 0">
+                        invisible="passport_count == 0"
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager">
                     <field name="passport_count" widget="statinfo"
                            string="Паспорти"/>
                 </button>
@@ -28,7 +30,7 @@
                         string="Створити акт перевірки"
                         class="btn-primary"
                         invisible="state not in ('done', 'to_close') or has_approved_inspection"
-                        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager"/>
                 <button name="action_create_passport" type="object"
                         string="Створити паспорт"
                         class="btn-secondary"
@@ -36,11 +38,11 @@
                         groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
             </xpath>
 
-            <!-- Restrict Components and Miscellaneous tabs to mrp_user: QC users lack
-                 stock.move / stock.picking.type access and would get AccessErrors otherwise -->
-            <xpath expr="//page[@name='components']" position="attributes">
-                <attribute name="groups">mrp.group_mrp_user</attribute>
+            <!-- Operations tab: extend base groups="mrp.group_mrp_routings" to include QC roles -->
+            <xpath expr="//page[@name='operations']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_routings,manufacturing_passport.group_qc_inspector</attribute>
             </xpath>
+            <!-- Miscellaneous tab: still restricted to mrp_user only -->
             <xpath expr="//page[@name='miscellaneous']" position="attributes">
                 <attribute name="groups">mrp.group_mrp_user</attribute>
             </xpath>
@@ -68,6 +70,29 @@
                 <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
             </xpath>
             <xpath expr="//button[@name='action_view_mrp_production_unbuilds']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+
+            <!-- Hide all MRP workflow action buttons from QC groups (read-only access) -->
+            <xpath expr="//button[@name='button_mark_done']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_unplan']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_start']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_assign']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='do_unreserve']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
                 <attribute name="groups">mrp.group_mrp_user,mrp.group_mrp_manager</attribute>
             </xpath>
 

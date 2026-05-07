@@ -8,14 +8,14 @@
     <record id="group_qc_inspector" model="res.groups">
         <field name="name">Інспектор ОТК</field>
         <field name="category_id" ref="module_category_qc"/>
-        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="users" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
     <record id="group_qc_manager" model="res.groups">
         <field name="name">Керівник ОТК</field>
         <field name="category_id" ref="module_category_qc"/>
         <field name="implied_ids" eval="[(4, ref('group_qc_inspector'))]"/>
-        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="users" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
     <!-- Grant QC groups access to the Manufacturing app root menu -->
@@ -26,26 +26,47 @@
         ]"/>
     </record>
 
-    <!-- Restrict MRP sub-menus to MRP groups so QC users only see the QC section -->
+    <!-- Restrict MRP sub-menus to MRP groups so QC inspectors only see the QC section -->
+    <!-- QC manager also gets Manufacturing and BoM menus for read-only access -->
     <record id="mrp.menu_mrp_manufacturing" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+        <field name="groups_id" eval="[
+            (4, ref('mrp.group_mrp_user')),
+            (4, ref('mrp.group_mrp_manager')),
+            (4, ref('manufacturing_passport.group_qc_manager')),
+        ]"/>
     </record>
     <record id="mrp.mrp_planning_menu_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
     </record>
     <record id="mrp.menu_mrp_bom" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+        <field name="groups_id" eval="[
+            (4, ref('mrp.group_mrp_user')),
+            (4, ref('mrp.group_mrp_manager')),
+            (4, ref('manufacturing_passport.group_qc_manager')),
+        ]"/>
     </record>
     <record id="mrp.menu_mrp_reporting" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
     </record>
 
-    <!-- ir.rule: QC groups can only read done manufacturing orders -->
+    <!-- ir.rule: QC inspectors can only read done manufacturing orders -->
     <record model="ir.rule" id="mrp_production_qc_done_only_rule">
         <field name="name">QC: only done manufacturing orders</field>
         <field name="model_id" search="[('model','=','mrp.production')]" model="ir.model"/>
         <field name="domain_force">[('state', '=', 'done')]</field>
         <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_inspector'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ir.rule: QC managers can read all manufacturing orders (OR'd with inspector rule) -->
+    <record model="ir.rule" id="mrp_production_qc_manager_all_rule">
+        <field name="name">QC Manager: all manufacturing orders</field>
+        <field name="model_id" search="[('model','=','mrp.production')]" model="ir.model"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
