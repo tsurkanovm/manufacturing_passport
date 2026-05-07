@@ -73,13 +73,13 @@
                                         <td><t t-esc="line.method or '—'"/></td>
                                         <td class="text-center"><t t-esc="line.uom or '—'"/></td>
                                         <td class="text-center">
-                                            <t t-if="line.check_type == 'quantitative' and (line.min_value or line.max_value)">
+                                            <t t-if="line.parameter_type == 'quantitative' and (line.min_value or line.max_value)">
                                                 <t t-esc="line.min_value"/>&#8202;–&#8202;<t t-esc="line.max_value"/>
                                             </t>
                                             <t t-else="">—</t>
                                         </td>
                                         <td class="text-center">
-                                            <t t-if="line.check_type == 'quantitative'">
+                                            <t t-if="line.parameter_type == 'quantitative'">
                                                 <t t-esc="line.actual_value"/>
                                             </t>
                                             <t t-else="">

@@ -96,7 +96,7 @@ class MrpQcInspection(models.Model):
         return super().create(vals_list)
 
     def action_start(self):
-        self.write({'state': 'in_progress'})
+        self.write({'state': 'in_review'})
         return True
 
     def action_done(self):
