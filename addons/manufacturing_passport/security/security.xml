@@ -26,21 +26,30 @@
         ]"/>
     </record>
 
-    <!-- Restrict MRP sub-menus to MRP groups so QC users only see the QC section -->
+    <!-- Restrict MRP sub-menus to MRP groups so QC inspectors only see the QC section -->
+    <!-- QC manager also gets Manufacturing and BoM menus for read-only access -->
     <record id="mrp.menu_mrp_manufacturing" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+        <field name="groups_id" eval="[
+            (4, ref('mrp.group_mrp_user')),
+            (4, ref('mrp.group_mrp_manager')),
+            (4, ref('manufacturing_passport.group_qc_manager')),
+        ]"/>
     </record>
     <record id="mrp.mrp_planning_menu_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
     </record>
     <record id="mrp.menu_mrp_bom" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
+        <field name="groups_id" eval="[
+            (4, ref('mrp.group_mrp_user')),
+            (4, ref('mrp.group_mrp_manager')),
+            (4, ref('manufacturing_passport.group_qc_manager')),
+        ]"/>
     </record>
     <record id="mrp.menu_mrp_reporting" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('mrp.group_mrp_user')), (4, ref('mrp.group_mrp_manager'))]"/>
     </record>
 
-    <!-- ir.rule: QC groups can only read done manufacturing orders -->
+    <!-- ir.rule: QC inspectors can only read done manufacturing orders -->
     <record model="ir.rule" id="mrp_production_qc_done_only_rule">
         <field name="name">QC: only done manufacturing orders</field>
         <field name="model_id" search="[('model','=','mrp.production')]" model="ir.model"/>
@@ -50,5 +59,42 @@
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ir.rule: QC managers can read all manufacturing orders (OR'd with inspector rule) -->
+    <record model="ir.rule" id="mrp_production_qc_manager_all_rule">
+        <field name="name">QC Manager: all manufacturing orders</field>
+        <field name="model_id" search="[('model','=','mrp.production')]" model="ir.model"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ir.rule: block write/create/unlink on product.product for QC manager
+         ir.model.access is additive across groups, so base.group_user write access
+         would override the read-only CSV row without this rule. -->
+    <record model="ir.rule" id="product_product_qc_manager_readonly_rule">
+        <field name="name">QC Manager: product variants read-only</field>
+        <field name="model_id" search="[('model','=','product.product')]" model="ir.model"/>
+        <field name="domain_force">[(0, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_manager'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="product_template_qc_manager_readonly_rule">
+        <field name="name">QC Manager: product templates read-only</field>
+        <field name="model_id" search="[('model','=','product.template')]" model="ir.model"/>
+        <field name="domain_force">[(0, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('manufacturing_passport.group_qc_manager'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
     </record>
 </odoo>
