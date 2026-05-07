@@ -6,17 +6,19 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
 
-            <!-- Smart buttons for QC inspections and passports -->
+            <!-- Smart buttons for QC inspections and passports — visible to QC roles and MRP managers only -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_view_inspections" type="object"
                         class="oe_stat_button" icon="fa-check-circle"
-                        invisible="inspection_count == 0">
+                        invisible="inspection_count == 0"
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager">
                     <field name="inspection_count" widget="statinfo"
                            string="Акти перевірки"/>
                 </button>
                 <button name="action_view_passports" type="object"
                         class="oe_stat_button" icon="fa-id-card"
-                        invisible="passport_count == 0">
+                        invisible="passport_count == 0"
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager">
                     <field name="passport_count" widget="statinfo"
                            string="Паспорти"/>
                 </button>
@@ -28,7 +30,7 @@
                         string="Створити акт перевірки"
                         class="btn-primary"
                         invisible="state not in ('done', 'to_close') or has_approved_inspection"
-                        groups="manufacturing_passport.group_qc_inspector,manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
+                        groups="manufacturing_passport.group_qc_inspector,mrp.group_mrp_manager"/>
                 <button name="action_create_passport" type="object"
                         string="Створити паспорт"
                         class="btn-secondary"
@@ -36,9 +38,9 @@
                         groups="manufacturing_passport.group_qc_manager,mrp.group_mrp_manager"/>
             </xpath>
 
-            <!-- Components tab: show to mrp_user (editable) and qc_manager (read-only by ACL) -->
-            <xpath expr="//page[@name='components']" position="attributes">
-                <attribute name="groups">mrp.group_mrp_user,manufacturing_passport.group_qc_manager</attribute>
+            <!-- Operations tab: extend base groups="mrp.group_mrp_routings" to include QC roles -->
+            <xpath expr="//page[@name='operations']" position="attributes">
+                <attribute name="groups">mrp.group_mrp_routings,manufacturing_passport.group_qc_inspector</attribute>
             </xpath>
             <!-- Miscellaneous tab: still restricted to mrp_user only -->
             <xpath expr="//page[@name='miscellaneous']" position="attributes">
